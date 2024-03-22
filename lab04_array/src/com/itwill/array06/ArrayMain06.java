@@ -16,9 +16,19 @@ public class ArrayMain06 {
 		System.out.println(array[0]); // ==> array[0]의: [[I@메모리주소
 		System.out.println(array[0].length);
 
+		// 인덱스를 사용한 2차원 배열 원소 출력
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array[i].length; j++) {
 				System.out.print(array[i][j] + "\t");
+			}
+			System.out.println();
+		}
+
+		System.out.println("=====================================");
+		// 향상된 for 구문을 사용한 2차원 배열 원소 출력
+		for (int[] is : array) {
+			for (int is2 : is) {
+				System.out.print(is2 + "\t");
 			}
 			System.out.println();
 		}
