@@ -23,7 +23,7 @@ public class ArrayMain07 {
 		// 향상된 for 구문을 사용한 2차원 배열 원소 출력
 		for (String[] is : idols) {
 			for (String is2 : is) {
-				System.out.print(is2 + "\t");
+				System.out.printf("%s\t", is2);
 			}
 			System.out.println();
 		}
