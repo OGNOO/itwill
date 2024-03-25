@@ -70,14 +70,14 @@ public class MethodMain05 {
 	 * @return array 원소들 중 최솟값
 	 */
 	public static int min(int[] arr) {
-		int arrMin = arr[0];
+		int result = arr[0];
 		for (int x : arr) {
-			if (x < arrMin) {
-				arrMin = x;
+			if (x < result) {
+				result = x;
 			}
 		}
 
-		return arrMin;
+		return result;
 	}
 
 }
