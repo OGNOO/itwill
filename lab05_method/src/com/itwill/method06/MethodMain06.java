@@ -28,7 +28,7 @@ public class MethodMain06 {
 	 * 
 	 * @param 콘솔에 출력할 빈 줄의 개수. 양의 정수. 만약 0 또는 음수이면 아무것도 출력하지 않음
 	 */
-	private static void newLine(int n) {
+	public static void newLine(int n) {
 		if (n > 0) {
 			for (int i = 0; i < n; i++) {
 				System.out.println(i);
