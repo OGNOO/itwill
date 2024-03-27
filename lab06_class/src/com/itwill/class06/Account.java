@@ -43,11 +43,17 @@ public class Account {
 	 * 
 	 * @param to     이체할 계좌(Account 타입)
 	 * @param amount 이체할 금액
+	 * @return true
 	 */
-	public void transfer(Account to, int amount) {
+	public boolean transfer(Account to, int amount) {
 		// 내 계좌에서의 잔고에서는 이체금액 amount 를 빼고, 이체할 계좌 to 의 잔고에서는 amount 를 더함
-		balance -= amount;
-		to.balance += amount;
+		if (balance - amount >= 0) {
+			withdraw(amount);
+			to.deposit(amount);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
