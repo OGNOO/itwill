@@ -50,26 +50,26 @@ public class ContactMain {
 
 	private void updateContactByIndex() {
 		System.out.println("\n==================[ 연락처 수정 ]==================");
-		System.out.print("인덱스 입력>> ");
+		System.out.print(" 인덱스 입력>> ");
 		int index = Integer.parseInt(scanner.nextLine());
 
 		if (count == 0) {
-			System.out.println("저장된 연락처가 없습니다.");
+			System.out.println(" 저장된 연락처가 없습니다.");
 
 		} else if (index > count) {
-			System.out.println("잘못된 접근 입니다.");
+			System.out.println(" 잘못된 접근 입니다.");
 		} else {
-			System.out.println("수정전: " + contacts[index].toString());
+			System.out.println(" 수정전: " + contacts[index].toString());
 
-			System.out.println("이름 수정>> ");
+			System.out.println(" 이름 수정>> ");
 			String name = scanner.nextLine();
 			contacts[index].setName(name);
 
-			System.out.println("전화번호 수정>> ");
+			System.out.println(" 전화번호 수정>> ");
 			String phone = scanner.nextLine();
 			contacts[index].setPhone(phone);
 
-			System.out.println("이메일 수정>> ");
+			System.out.println(" 이메일 수정>> ");
 			String email = scanner.nextLine();
 			contacts[index].setEmail(email);
 		}
@@ -82,10 +82,9 @@ public class ContactMain {
 		int index = Integer.parseInt(scanner.nextLine());
 
 		if (count == 0) {
-			System.out.println("저장된 연락처가 없습니다.");
-			System.out.println(count);
+			System.out.println("\n 저장된 연락처가 없습니다.");
 		} else if (index > count) {
-			System.out.println("잘못된 접근 입니다.");
+			System.out.println("\n 잘못된 접근 입니다.");
 		} else {
 			System.out.println(contacts[index].toString());
 		}
@@ -94,25 +93,29 @@ public class ContactMain {
 	private void readAllContacts() {
 		System.out.println("\n==================[ 연락처 목록 ]==================");
 		for (int i = 0; i < count; i++) {
-			System.out.println("인덱스: " + i + contacts[i].toString());
+			System.out.println("인덱스: " + i + ", " + contacts[i].toString());
 		}
 	}
 
 	private void saveNewContact() {
 		System.out.println("\n================[ 새 연락처 저장 ]=================");
-		System.out.print(" 이름 입력>> ");
-		String name = scanner.nextLine();
-		System.out.print(" 전화번호 입력>> ");
-		String phone = scanner.nextLine();
-		System.out.print(" 이메일 입력>> ");
-		String email = scanner.nextLine();
+		if (count != MAX_LENGTH) {
+			System.out.print(" 이름 입력>> ");
+			String name = scanner.nextLine();
+			System.out.print(" 전화번호 입력>> ");
+			String phone = scanner.nextLine();
+			System.out.print(" 이메일 입력>> ");
+			String email = scanner.nextLine();
 
-		Contact contact = new Contact(name, phone, email);
+			Contact contact = new Contact(name, phone, email);
 
-		// Contact 타입 객체를 연락처 배열 인덱스 count 에 저장
-		contacts[count] = contact;
-		// 배열에 저장 후에는 연락처 저장 개수(인덱스)를 증가
-		count++;
+			// Contact 타입 객체를 연락처 배열 인덱스 count 에 저장
+			contacts[count] = contact;
+			// 배열에 저장 후에는 연락처 저장 개수(인덱스)를 증가
+			count++;
+		} else {
+			System.out.println(" 저장 공간이 부족합니다.");
+		}
 
 	}
 
