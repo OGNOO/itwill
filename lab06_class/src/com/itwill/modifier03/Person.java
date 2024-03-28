@@ -6,8 +6,12 @@ public class Person {
 
 	// constructor
 	public Person(String name, int age) {
-		this.name = name;
-		this.age = age;
+		if (name != null && age >= 0) {
+			this.name = name;
+			this.age = age;
+		} else {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	// method
@@ -22,7 +26,7 @@ public class Person {
 
 	// setter 메서드
 	public void setAge(int age) {
-		if (age > 0) {
+		if (age >= 0) {
 			this.age = age;
 		}
 	}
