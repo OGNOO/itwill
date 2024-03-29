@@ -44,7 +44,7 @@ public class Contact {
 
 	// 연락처 정보(이름, 전화번호, 이메일)을 문자열로 리턴하는 메서드
 	public String toString() {
-		return "Contact(name = " + name + ", phone = " + phone + ", email = " + email + ")";
+		return " Contact(name = " + name + ", phone = " + phone + ", email = " + email + ")";
 	}
 
 }
