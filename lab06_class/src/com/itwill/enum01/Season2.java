@@ -7,13 +7,13 @@ public class Season2 {
 	public static final Season2 FALL = new Season2("가을");
 	public static final Season2 WINTER = new Season2("겨울");
 
-	private String neme;
+	private String name;
 
 	private Season2(String name) {
-		this.neme = name;
+		this.name = name;
 	}
 
 	public String getNeme() {
-		return neme;
+		return name;
 	}
 }

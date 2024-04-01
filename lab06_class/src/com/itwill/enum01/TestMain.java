@@ -25,7 +25,7 @@ public class TestMain {
 			System.out.println("이상기후");
 		}
 
-		Season2 season2 = Season2.SPRING;
+		Season2 season2 = Season2.WINTER;
 		if (season2 == Season2.SPRING) {
 			System.out.println("봄");
 		} else if (season2 == Season2.SUMMER) {
@@ -34,7 +34,10 @@ public class TestMain {
 			System.out.println("...");
 		}
 
-		System.out.println(Season2.SPRING.getNeme());
+		Season3 season3 = Season3.FALL;
+		System.out.println(season3);
+		System.out.println(season3.getName());
+
 	}
 
 }
