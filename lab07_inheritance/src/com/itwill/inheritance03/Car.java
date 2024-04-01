@@ -37,4 +37,5 @@ public class Car {
 		System.out.println("자동차 운전중(속력: " + speed + ", 연료: " + fuel + ")");
 
 	}
+
 }
