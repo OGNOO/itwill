@@ -45,12 +45,4 @@ public class InheritanceMain03 {
 			System.out.println("자동차 검사...");
 		}
 	}
-	//
-	//
-	//
-	//
-	//
-	//
-	//
-	//
 }
