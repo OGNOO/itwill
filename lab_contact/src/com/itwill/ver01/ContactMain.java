@@ -20,8 +20,10 @@ public class ContactMain {
 			// TODO 메인 메뉴 보여주기
 			// 스캐너 입력
 			int menu = app.showMainMenu();
+
 			switch (menu) {
 			case 0:
+				// 프로그램 종료
 				run = false;
 				break;
 			case 1:
@@ -53,6 +55,8 @@ public class ContactMain {
 	}
 
 	private void deleteContactByIndex() {
+		System.out.println("\n=====================[ 연락처 삭제 ]=====================");
+
 		int index = readContactByIndex(false);
 
 		if (index < count && index >= 0) {
@@ -66,7 +70,6 @@ public class ContactMain {
 				contacts[index].setPhone(null);
 				contacts[index].setEmail(null);
 				count--;
-
 				if (contacts[index + 1] != null) {
 					for (int i = index; i <= count; i++) {
 						contacts[index].setName(contacts[index + 1].getName());
@@ -79,7 +82,8 @@ public class ContactMain {
 	}
 
 	private void updateContactByIndex() {
-		System.out.println("\n==================[ 연락처 수정 ]==================");
+		System.out.println("\n=====================[ 연락처 수정 ]=====================");
+
 		int index = readContactByIndex(false);
 
 		if (index < count && index >= 0) {
@@ -107,14 +111,13 @@ public class ContactMain {
 	 */
 	private int readContactByIndex(boolean printTextIndexSearch) {
 		int index = -1; // index 초기값 false
-		if (printTextIndexSearch == true) {
-			System.out.println("\n==================[ 인덱스 검색 ]==================");
-		}
 
+		if (printTextIndexSearch == true) {
+			System.out.println("\n=====================[ 인덱스 검색 ]=====================");
+		}
 		if (count != 0) {
 			System.out.print(" 인덱스 입력>> ");
 			index = Integer.parseInt(scanner.nextLine());
-
 			if (index < count && index >= 0) {
 				System.out.println(contacts[index].toString());
 			} else {
@@ -127,7 +130,7 @@ public class ContactMain {
 	}
 
 	private void readAllContacts() {
-		System.out.println("\n==================[ 연락처 목록 ]==================");
+		System.out.println("\n=====================[ 연락처 목록 ]=====================");
 
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {
@@ -141,11 +144,14 @@ public class ContactMain {
 	private void saveNewContact() {
 		if (count < MAX_LENGTH) {
 			if (count != MAX_LENGTH) {
-				System.out.println("\n================[ 새 연락처 저장 ]=================");
+				System.out.println("\n=====================[ 새 연락처 저장 ]=====================");
+
 				System.out.print(" 이름 입력>> ");
 				String name = scanner.nextLine();
+
 				System.out.print(" 전화번호 입력>> ");
 				String phone = scanner.nextLine();
+
 				System.out.print(" 이메일 입력>> ");
 				String email = scanner.nextLine();
 
@@ -164,13 +170,28 @@ public class ContactMain {
 	}
 
 	private int showMainMenu() {
-		System.out.println("\n===================================================");
-		System.out.println(" [0]종료 [1]저장 [2]목록 [3]인덱스검색 [4]수정하기");
-		System.out.println("===================================================");
+		System.out.println("\n============================================================");
+		System.out.println(" [0]종료 [1]저장 [2]목록 [3]인덱스검색 [4]수정하기 [5] 삭제");
+		System.out.println("============================================================");
 		System.out.print(" 선택> ");
-
-		int menu = Integer.parseInt(scanner.nextLine());
+		int menu = inputInteger();
 
 		return menu;
+	}
+
+	private int inputInteger() {
+		boolean run = true;
+		int result = 0;
+
+		while (run) {
+			try {
+				result = Integer.parseInt(scanner.nextLine());
+				run = false;
+			} catch (NumberFormatException e) {
+				System.out.println(" !! 정수가 아닙니다. !!");
+			}
+		}
+
+		return result;
 	}
 }
