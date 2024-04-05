@@ -60,7 +60,6 @@ public class MemberDaoImpl implements MemberDao {
 		if (isMemoryFull()) {
 			return 0;
 		}
-
 		members[count] = member;
 		count++;
 
