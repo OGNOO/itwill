@@ -4,6 +4,9 @@ import com.itwill.ver01.Contact;
 
 public class ContactDaoImpl implements ContactDao {
 	// field
+	// 연락처 정보를 저장할 배열 선언
+	private Contact[] contacts = new Contact[MAX_LENGTH];
+	private int count = 0;
 
 	// constructor
 	private ContactDaoImpl() {
@@ -19,10 +22,6 @@ public class ContactDaoImpl implements ContactDao {
 		return instance;
 	}
 	// -----singleton 구현
-
-	// 연락처 정보를 저장할 배열 선언
-	private Contact[] contacts = new Contact[MAX_LENGTH];
-	private int count = 0;
 
 	// method
 	public boolean isNotNull(String str) {
@@ -83,5 +82,4 @@ public class ContactDaoImpl implements ContactDao {
 			return 0;
 		}
 	}
-
 }
