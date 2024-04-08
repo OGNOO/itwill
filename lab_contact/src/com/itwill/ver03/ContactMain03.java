@@ -10,7 +10,7 @@ public class ContactMain03 {
 	private ContactDao dao = ContactDaoImpl.getInstance();
 
 	public static void main(String[] args) {
-		System.out.println("\t ***** 연락처 프로그램 v0.3 *****");
+		System.out.println("\t   ***** 연락처 프로그램 v0.3 *****");
 
 		ContactMain03 app = new ContactMain03();
 
@@ -185,9 +185,9 @@ public class ContactMain03 {
 	}
 
 	private int selectMainMenu() {
-		System.out.println("\n===============================================");
+		System.out.println("\n=======================================================");
 		System.out.println(" [0]종료 [1]저장 [2]목록 [3]인덱스검색 [4]수정 [5]삭제");
-		System.out.println("===============================================");
+		System.out.println("=======================================================");
 
 		int menu = inputInteger("선택> ");
 
