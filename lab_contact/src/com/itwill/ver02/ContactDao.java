@@ -3,7 +3,6 @@ package com.itwill.ver02;
 import com.itwill.ver01.Contact;
 
 public interface ContactDao {
-
 	int MAX_LENGTH = 3;
 
 	int create(Contact contact);

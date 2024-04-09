@@ -10,7 +10,7 @@ public class ContactMain03 {
 	private ContactDao dao = ContactDaoImpl.getInstance();
 
 	public static void main(String[] args) {
-		System.out.println("\t   ***** 연락처 프로그램 v0.3 *****");
+		System.out.println("\n\t   ***** 연락처 프로그램 v0.3 *****");
 
 		ContactMain03 app = new ContactMain03();
 
@@ -45,7 +45,7 @@ public class ContactMain03 {
 	}
 
 	private void deleteMemberByIndex() {
-		System.out.println("\n=================[ 연락처 삭제 ]==================");
+		System.out.println("\n====================[ 연락처 삭제 ]====================");
 		int index = readMemberByIndex(false);
 
 		if (index == -1)
@@ -69,7 +69,7 @@ public class ContactMain03 {
 	}
 
 	private void updateMember() {
-		System.out.println("\n=================[ 연락처 수정 ]==================");
+		System.out.println("\n====================[ 연락처 수정 ]====================");
 
 		int index = readMemberByIndex(false);
 
@@ -90,6 +90,14 @@ public class ContactMain03 {
 		System.out.print("새 전화번호>> ");
 		String newPhone = scanner.nextLine();
 
+		if (!((ContactDaoImpl) dao).isValidPhoneNumber(newPhone) && !newPhone.isBlank()) {
+			// 유효하지 않은 전화번호
+			System.out.println("유효하지 않은 전화번호 입니다.");
+			System.out.println("Ex1.) 010-1234-1234");
+			System.out.println("Ex2.) 01012341234");
+			return;
+		}
+
 		if (newPhone.isBlank()) {
 			contact.setPhone(contact.getPhone());
 		} else {
@@ -99,6 +107,12 @@ public class ContactMain03 {
 		System.out.print("새 이메일>> ");
 		String newEmail = scanner.nextLine();
 
+		if (!((ContactDaoImpl) dao).isValidEmail(newEmail) && !newEmail.isBlank()) {
+			// 유효하지 않은 이메일
+			System.out.println("유효하지 않은 이메일 입니다.");
+			return;
+		}
+
 		if (newEmail.isBlank()) {
 			contact.setEmail(contact.getEmail());
 		} else {
@@ -107,8 +121,12 @@ public class ContactMain03 {
 
 		int result = dao.update(index, contact);
 
-		if (result == 1) {
-			System.out.println(newName +"님으로 연락처가 변경 되었습니다.");
+		if (result == 1 && !newName.isBlank()) {
+			System.out.println(newName + "님으로 연락처가 변경 되었습니다.");
+		} else if (newName.isBlank() && newPhone.isBlank() && newEmail.isBlank()) {
+			System.out.println(contact.getName() + "님의 연락처 변경이 취소 되었습니다.");
+		} else if (newName.isBlank()) {
+			System.out.println(contact.getName() + "님의 연락처가 변경 되었습니다.");
 		} else {
 			System.out.println("연락처 수정 실패");
 		}
@@ -116,7 +134,7 @@ public class ContactMain03 {
 
 	private int readMemberByIndex(boolean printMenuHead) {
 		if (printMenuHead) {
-			System.out.println("\n=================[ 연락처 검색 ]==================");
+			System.out.println("\n====================[ 연락처 검색 ]====================");
 		}
 		int index = 0;
 		Contact contact = dao.read(index);
@@ -141,21 +159,23 @@ public class ContactMain03 {
 	}
 
 	private void readAllMembers() {
-		System.out.println("\n=================[ 연락처 목록 ]==================");
+		System.out.println("\n====================[ 연락처 목록 ]====================");
 
 		if (!dao.read().isEmpty()) {
-			System.out.println(dao.read());
+			for (int i = 0; i < dao.read().size(); i++) {
+				System.out.println(dao.read().get(i));
+			}
 		} else {
 			System.out.println("저장된 연락처가 없습니다");
 		}
 	}
 
 	private void saveNewMember() {
-		System.out.println("\n=================[ 연락처 저장 ]==================");
+		System.out.println("\n====================[ 연락처 저장 ]====================");
 
 		System.out.print("이름 입력>> ");
 		String name = scanner.nextLine();
-
+		
 		if (name.isBlank()) {
 			System.out.println("잘못된 이름 입니다.");
 			return;
@@ -165,13 +185,27 @@ public class ContactMain03 {
 		String phone = scanner.nextLine();
 
 		if (phone.isBlank()) {
-			System.out.println("잘못된 전화번호 입니다.");
+			System.out.println("전화번호를 입력해주세요.");
+			return;
+		}
+
+		if (!((ContactDaoImpl) dao).isValidPhoneNumber(phone)) {
+			// 유효하지 않은 전화번호
+			System.out.println("유효하지 않은 전화번호 입니다.");
+			System.out.println("Ex1.) 010-1234-1234");
+			System.out.println("Ex2.) 01012341234");
 			return;
 		}
 
 		System.out.println("\n입력할 이메일이 없으면 Enter를 눌러주세요");
 		System.out.print("이메일 입력>> ");
 		String email = scanner.nextLine();
+
+		if (!((ContactDaoImpl) dao).isValidEmail(email) && !email.isBlank()) {
+			// 유효하지 않은 이메일
+			System.out.println("유효하지 않은 이메일 입니다.");
+			return;
+		}
 
 		Contact contact = new Contact(name, phone, email);
 		int result = dao.create(contact);

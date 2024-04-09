@@ -45,7 +45,7 @@ public class Contact {
 	// 연락처 정보(이름, 전화번호, 이메일)을 문자열로 리턴하는 메서드
 	@Override
 	public String toString() {
-		return " 이름 = " + name + ", 전화번호 = " + phone + ", 이메일 = " + email;
+		return "이름 = " + name + ", 전화번호 = " + phone + ", 이메일 = " + email;
 	}
 
 }

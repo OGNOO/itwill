@@ -1,11 +1,8 @@
 package com.itwill.set01;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.TreeSet;
 
-//
 // Collection<E>
 //  |__List<E>
 //     |__ArrayList<E>, LinkedList<E>, ...
@@ -62,11 +59,9 @@ public class SetMain01 {
 		set.add("Hello");
 		set.add("안녕하세요");
 		set.add("Hello");
-		
+
 		System.out.println(set);
 		System.out.println("size = " + set.size());
-		
-		
 
 	}
 }
