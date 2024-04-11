@@ -19,7 +19,7 @@ public class FileMain06 {
 			list.add(new Student(i, "name_" + i, new Score(i, i, i)));
 		}
 
-		String fileName = "data/student_list.dat";
+		String fileName = "data/studentScore_list.dat";
 		long start = System.currentTimeMillis();
 
 		try (FileOutputStream fos = new FileOutputStream(fileName);
