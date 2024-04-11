@@ -16,7 +16,7 @@ public class FileMain05 {
 		// 파일에 쓸(write) 더미 데이터
 		ArrayList<Product> list = new ArrayList<>();
 
-		for (int i = 0; i < 1_000; i++) {
+		for (int i = 0; i < 1_000_000; i++) {
 			list.add(new Product(i, "name_" + i, i));
 		}
 
@@ -49,9 +49,10 @@ public class FileMain05 {
 			for (Object object : result) {
 				if (object instanceof Product) {
 					newList.add((Product) object);
-					System.out.println(object.toString());
 				}
 			}
+			System.out.println(newList.getFirst());
+			System.out.println(newList.getLast());
 			long end = System.currentTimeMillis();
 
 			System.out.println("소요 시간: " + (end - start) + "ms");
