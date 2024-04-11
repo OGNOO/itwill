@@ -2,13 +2,8 @@ package com.itwill.file03;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 
 // 파일 ===> FileInputStream ===> BufferInputStream ===> 프로그램 
 // FIS: HDD 에 있는 파일을 직접 접근해서 데이터를 읽고, 메모리(RAM)에 적재
