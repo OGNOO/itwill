@@ -175,7 +175,7 @@ public class ContactMain03 {
 
 		System.out.print("이름 입력>> ");
 		String name = scanner.nextLine();
-		
+
 		if (name.isBlank()) {
 			System.out.println("잘못된 이름 입니다.");
 			return;
@@ -200,6 +200,10 @@ public class ContactMain03 {
 		System.out.println("\n입력할 이메일이 없으면 Enter를 눌러주세요");
 		System.out.print("이메일 입력>> ");
 		String email = scanner.nextLine();
+
+		if (email.isBlank()) {
+			email = " ";
+		}
 
 		if (!((ContactDaoImpl) dao).isValidEmail(email) && !email.isBlank()) {
 			// 유효하지 않은 이메일

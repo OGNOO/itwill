@@ -47,12 +47,4 @@ public class Contact {
 	public String toString() {
 		return "이름 = " + name + ", 전화번호 = " + phone + ", 이메일 = " + email;
 	}
-
 }
-/*
- * 
- * 
- * 
- * 
- * 
- */

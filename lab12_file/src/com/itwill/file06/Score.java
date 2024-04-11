@@ -2,15 +2,20 @@ package com.itwill.file06;
 
 import java.io.Serializable;
 
-public class Score implements Serializable{
+public class Score implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	// field
 	private int java;
 	private int web;
 	private int spring;
+
+	// constructor
+	public Score() {
+	}
 
 	public Score(int java, int web, int spring) {
 		super();
@@ -19,6 +24,13 @@ public class Score implements Serializable{
 		this.spring = spring;
 	}
 
+	// method
+	@Override
+	public String toString() {
+		return "Score [java=" + java + ", web=" + web + ", spring=" + spring + "]";
+	}
+
+	// getterSetter
 	public int getJava() {
 		return java;
 	}
@@ -41,11 +53,6 @@ public class Score implements Serializable{
 
 	public void setSpring(int spring) {
 		this.spring = spring;
-	}
-
-	@Override
-	public String toString() {
-		return "Score [java=" + java + ", web=" + web + ", spring=" + spring + "]";
 	}
 
 }

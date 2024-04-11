@@ -7,9 +7,15 @@ public class Student implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	// field
 	private int id;
 	private String name;
 	private Score score;
+
+	// constructor
+	public Student() {
+	}
 
 	public Student(int id, String name, Score score) {
 		this.id = id;
@@ -17,6 +23,13 @@ public class Student implements Serializable {
 		this.score = score;
 	}
 
+	// method
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", name=" + name + ", " + score + "]";
+	}
+
+	// getterSetter
 	public int getId() {
 		return id;
 	}
@@ -31,11 +44,6 @@ public class Student implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return "Student [id=" + id + ", name=" + name + ", " + score + "]";
 	}
 
 }
