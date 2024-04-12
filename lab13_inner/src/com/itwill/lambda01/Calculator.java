@@ -8,11 +8,9 @@ public class Calculator {
 		double calculate(double x, double y);
 	}
 
-	// field
 	private double x;
 	private double y;
 
-	// constructor
 	public Calculator(double x, double y) {
 		this.x = x;
 		this.y = y;
@@ -21,7 +19,4 @@ public class Calculator {
 	public double calculate(Calculable calc) {
 		return calc.calculate(x, y);
 	}
-
-	// method
-
 }
