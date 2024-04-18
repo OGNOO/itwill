@@ -103,7 +103,7 @@ public class AppMain07 {
 		btnMyFrame = new JButton("Custom Frame");
 		btnMyFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyFrame.showMyFrame();
+				MyFrame.showMyFrame(frame);
 			}
 		});
 		btnMyFrame.setFont(new Font("D2Coding", Font.BOLD, 20));
