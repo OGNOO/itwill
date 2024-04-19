@@ -5,12 +5,14 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import com.iwill.swing7.MyFrame.Notifiable;
+
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
-public class AppMain07 {
+public class AppMain07 implements Notifiable {
 
 	public JFrame frame;
 	private JButton btnMsgDlg;
@@ -18,6 +20,10 @@ public class AppMain07 {
 	private JButton btnCustomDialog;
 	private JButton btnMyFrame;
 
+	@Override
+	public void notifyMessage(String message) {
+		btnMyFrame.setText(message);
+	}
 	/**
 	 * Launch the application.
 	 */
@@ -46,6 +52,7 @@ public class AppMain07 {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+
 		frame.getContentPane().setFont(new Font("D2Coding", Font.PLAIN, 12));
 		frame.setBounds(100, 100, 666, 604);
 		frame.setLocationRelativeTo(null);
@@ -99,11 +106,11 @@ public class AppMain07 {
 		btnCustomDialog.setFont(new Font("D2Coding", Font.BOLD, 20));
 		btnCustomDialog.setBounds(220, 347, 197, 81);
 		frame.getContentPane().add(btnCustomDialog);
-		
+
 		btnMyFrame = new JButton("Custom Frame");
 		btnMyFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MyFrame.showMyFrame(frame);
+				MyFrame.showMyFrame(frame, AppMain07.this);
 			}
 		});
 		btnMyFrame.setFont(new Font("D2Coding", Font.BOLD, 20));
@@ -115,6 +122,5 @@ public class AppMain07 {
 		// 메세지 다이얼로그 보여주기
 //		JOptionPane.showMessageDialog(frame, "안녕하세요");
 		JOptionPane.showMessageDialog(frame, "안녕하세요, swing", "메세지", JOptionPane.ERROR_MESSAGE);
-
 	}
 }
