@@ -10,8 +10,8 @@ public class Blog {
 		public static final String COL_TITLE = "TITLE";
 		public static final String COL_CONTENT = "CONTENT";
 		public static final String COL_WRITER= "WRITER";
-		public static final String COL_CREATEDTIME = "CREATED_TIME";
-		public static final String COL_MODIFIEDTIME = "MODIFIED_TIME";
+		public static final String COL_CREATED_TIME = "CREATED_TIME";
+		public static final String COL_MODIFIED_TIME = "MODIFIED_TIME";
 	}
 
 	private int id;

@@ -63,8 +63,8 @@ public class JdbcMain01 {
 			String title = rs.getString(COL_TITLE); // 테이블의 TITLE 컬럼 값을 읽음.
 			String content = rs.getString(COL_CONTENT);
 			String writer = rs.getString(COL_WRITER);
-			LocalDateTime createdTime = rs.getTimestamp(COL_CREATEDTIME).toLocalDateTime();
-			LocalDateTime modifiedTime = rs.getTimestamp(COL_MODIFIEDTIME).toLocalDateTime();
+			LocalDateTime createdTime = rs.getTimestamp(COL_CREATED_TIME).toLocalDateTime();
+			LocalDateTime modifiedTime = rs.getTimestamp(COL_MODIFIED_TIME).toLocalDateTime();
 
 			Blog blog = new Blog(id, title, content, writer, createdTime, modifiedTime);
 			System.out.println(blog);
