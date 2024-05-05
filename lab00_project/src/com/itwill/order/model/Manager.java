@@ -25,10 +25,6 @@ public class Manager {
 		return crud;
 	}
 
-	public void setCrud(String crud) {
-		this.crud = crud;
-	}
-
 	public String getName() {
 		return name;
 	}

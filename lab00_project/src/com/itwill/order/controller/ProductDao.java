@@ -54,7 +54,7 @@ public class ProductDao {
 		closeResources(conn, stmt, null);
 	}
 
-	private Product makeBasedProductFromResultSet(ResultSet rs) throws SQLException {
+	public Product makeBasedProductFromResultSet(ResultSet rs) throws SQLException {
 		String productCategory = rs.getString(COL_PRODUCT_CATEGORY);
 		String productName = rs.getString(COL_PRODUCT_NAME);
 		int currentInven = rs.getInt(COL_CURRENT_INVEN);

@@ -9,7 +9,6 @@ public class Product {
 		public static final String COL_MIN_STK = "MIN_STK"; // 최소확보재고
 		public static final String COL_IMSQOB = "IMSQOB"; // 최소확보재고 이하 일때 발주할 수량
 		public static final String COL_QNTTY_BNDL = "QNTTY_BNDL"; // 묶음 수량당 낱개 수량
-//		public static final String COL_EXPCT_STCAR = "CURRENT_INVEN+(IMSQOB*QNTTY_BNDL)"; // 묶음 수량당 낱개 수량
 	}
 
 	private String productCategory;
@@ -18,17 +17,9 @@ public class Product {
 	private int minStk;
 	private int imsqob;
 	private int qnttyBndl;
-//	private int expctStcar;
 
 	public Product() {
 	}
-
-//	public Product(String productCategory, String productName, int currentInven, int imsqob) {
-//		this.productCategory = productCategory;
-//		this.productName = productName;
-//		this.currentInven = currentInven;
-//		this.imsqob = imsqob;
-//	}
 
 	public Product(String productCategory, String productName, int currentInven, int minStk, int imsqob,
 			int qnttyBndl) {

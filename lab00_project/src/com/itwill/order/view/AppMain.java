@@ -1,6 +1,7 @@
 package com.itwill.order.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.time.LocalDateTime;
@@ -16,12 +17,17 @@ import javax.swing.JPanel;
 
 import com.itwill.order.controller.ManagerDao;
 import com.itwill.order.controller.ProductDao;
+import com.itwill.order.controller.ProductLogDao;
 import com.itwill.order.model.Product;
+import com.itwill.order.model.ProductLog;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -31,16 +37,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.plaf.basic.BasicSliderUI.TrackListener;
+import javax.swing.event.AncestorEvent;
 
 public class AppMain implements PropertyChangeListener {
 	private static final String[] ORDER_LIST = { "상품분류", "상품명", "현재 재고", "발주 수량", "입고후 예상 수량" };
-	private static final String[] BASED_ORDERS = { "상품분류", "상품명", "현재 재고", "최소 확보 재고", "최소확보재고 이하 일때 발주할 수량(묶음)",
-			"묶음당 낱개" };
+	private static final String[] BASED_ORDERS = { "상품분류", "상품명", "현재 재고", "최소 확보 재고", "이하 일때 발주할 묶음", "묶음당 낱개" };
+
+	private static final String[] SHOW_LOGS = { "로그번호", "데이터 조작", "로그시간", "(전)상품분류", "(후)상품분류", "상품명", "(전)현재 재고",
+			"(후)현재 재고", "(전)최소 확보 재고", "(후)최소 확보 재고", "(전)이하 일때 발주할 묶음", "(후)이하 일때 발주할 묶음", "(전)묶음당 낱개", "(후)묶음당 낱개",
+			"관리자" };
 
 	private String access = null;
 	private JFrame frame;
 	private ManagerDao managerDao = ManagerDao.getInstance();
 	private ProductDao productDao = ProductDao.getInstance();
+	private ProductLogDao productLogDao = ProductLogDao.getInstance();
 	private JTable tableBasedOrders;
 	private JPanel tabBasedOrders;
 	private JTable tableOrderList;
@@ -61,6 +74,12 @@ public class AppMain implements PropertyChangeListener {
 	private int editingRow;
 	private int editingColumn;
 	private TreeSet<Integer> updatedRowsSet = new TreeSet<>();
+	private String checkCrud;
+	private JTabbedPane tabbedPane;
+	private JTable tableShowLogs;
+	private DefaultTableModel tableShowLogsModel;
+	private String replaceSelectedOption;
+	private TableColumn column;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -91,7 +110,7 @@ public class AppMain implements PropertyChangeListener {
 			System.out.println("선택한 옵션: " + selectedOption);
 			System.out.println("입력된 텍스트: " + input);
 			if (managerDao.login(selectedOption, input) == 1) {
-				String checkCrud = managerDao.checkCrud(selectedOption);
+				checkCrud = managerDao.checkCrud(selectedOption);
 				if (checkCrud == null) {
 					JOptionPane.showMessageDialog(null, "접근 권한이 없습니다.", "경고", JOptionPane.ERROR_MESSAGE);
 					initialize();
@@ -108,30 +127,31 @@ public class AppMain implements PropertyChangeListener {
 		}
 		frame = new JFrame();
 		frame.setTitle("발주 Helper");
-		frame.setBounds(100, 100, 800, 700);
+		frame.setBounds(100, 100, 1800, 700);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		// 탭 생성
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		tabbedPane.setFont(new Font("굴림", Font.PLAIN, 16));
 
 		// 첫번째 탭 ----->
 		JPanel tabOrderList = new JPanel();
-		tabbedPane.addTab("발주 목록", tabOrderList);
+		tabbedPane.addTab("발주 예상 목록", tabOrderList);
 		tabOrderList.setLayout(new BorderLayout(0, 0));
 
 		if (selectedOption.contains("님"))
-			selectedOption = selectedOption.replace("님", "");
+			replaceSelectedOption = selectedOption.replace("님", "");
 		LocalDateTime now = LocalDateTime.now();
-		String formattedDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd "));
-		String formattedTime = now.format(DateTimeFormatter.ofPattern(" HH시mm분"));
+		String formattedDate = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"));
+		String formattedTime = now.format(DateTimeFormatter.ofPattern("HH시 mm분"));
 		System.out.println(formattedTime);
-		String labelStr = String.format("안녕하세요 %s님 %s 기준. 오늘 발주하실 내역입니다.", selectedOption,
-				formattedDate + formattedTime);
+		String labelStr = String.format("안녕하세요 %s님 %s 기준. 오늘 발주하실 내역입니다.", replaceSelectedOption,
+				formattedDate + " " + formattedTime);
 		System.out.println(selectedOption);
 		lblNewLabel = new JLabel(labelStr);
+		lblNewLabel.setPreferredSize(new Dimension(428, 50));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("굴림", Font.PLAIN, 18));
 		tabOrderList.add(lblNewLabel, BorderLayout.NORTH);
@@ -145,9 +165,12 @@ public class AppMain implements PropertyChangeListener {
 		tableOrderList.getTableHeader().setFont(new Font("굴림", Font.BOLD, 18));
 		tableOrderList.setFont(new Font("굴림", Font.PLAIN, 16));
 		tableOrderList.setRowHeight(26);
+
+		scrollPaneOrderList.setViewportView(tableOrderList);
 		// <----- 첫번째 탭
 		// 두번째 탭 ----->
 		tabBasedOrders = new JPanel();
+		tabbedPane.addTab("발주 기준", tabBasedOrders);
 		tabBasedOrders.setLayout(new BorderLayout(0, 0));
 
 		// 버튼 집합 ----->
@@ -189,14 +212,15 @@ public class AppMain implements PropertyChangeListener {
 		cancelBtn = new JButton("취소");
 		cancelBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// 에러 있었음 주의
 				tableBasedOrders.editingCanceled(null);
+//				System.out.println("?????"+tableBasedOrders.editCellAt(editingRow, editingColumn));
 				cancelBtn.setEnabled(false);
 				deleteBtn.setEnabled(true);
 				addBtn.setEnabled(true);
 				saveBtn.setEnabled(false);
 				PropertyChangeListener[] listeners = tableBasedOrders.getPropertyChangeListeners();
 				updatedRowsSet.clear();
-//				System.out.println(listeners.length);
 				if (listeners.length == 1) {
 					tableBasedOrders.addPropertyChangeListener(AppMain.this);
 				}
@@ -224,13 +248,47 @@ public class AppMain implements PropertyChangeListener {
 		tableBasedOrders.setRowHeight(26);
 
 		scrollPaneBasedOrders.setViewportView(tableBasedOrders);
-		scrollPaneOrderList.setViewportView(tableOrderList);
-		tabbedPane.addTab("발주 기준", tabBasedOrders);
 
 		// <----- 두번째 탭
+		JPanel tabShowLog = new JPanel();
+		tabShowLog.addAncestorListener(new AncestorListener() {
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
+				System.out.println("세번째 탭 클릭");
+				List<ProductLog> productLogs = productLogDao.readShowLog();
+				resetShowLogTable(productLogs);
+			}
+
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+			}
+
+			@Override
+			public void ancestorRemoved(AncestorEvent event) {
+			}
+		});
+		tabbedPane.addTab("변경 로그", tabShowLog);
+		// 세번쨰 탭 권한 설정
+		if (!checkCrud.toUpperCase().contains("CRUD")) {
+			tabbedPane.setEnabledAt(2, false);
+			System.out.println("최고관리자 아님");
+		}
+		tabShowLog.setLayout(new BorderLayout(0, 0));
+
+		JScrollPane scrollPaneShowLog = new JScrollPane();
+		tabShowLog.add(scrollPaneShowLog);
+
+		tableShowLogs = new JTable();
+		tableShowLogsModel = new DefaultTableModel(null, SHOW_LOGS);
+		tableShowLogs.getTableHeader().setPreferredSize(new Dimension(0, 30));
+		tableShowLogs.getTableHeader().setFont(new Font("굴림", Font.BOLD, 18));
+		tableShowLogs.setFont(new Font("굴림", Font.PLAIN, 16));
+		tableShowLogs.setRowHeight(26);
+
+		scrollPaneShowLog.setViewportView(tableShowLogs);
+
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(tabbedPane, BorderLayout.CENTER);
-
 	}
 
 	// 모든 테이블 초기화
@@ -246,7 +304,6 @@ public class AppMain implements PropertyChangeListener {
 
 	// 첫번째 탭 테이블 그리기
 	private void resetOrderListTable(List<Product> listProducts) {
-		// 테이블 편집 모드 막기
 		tableOrderListModel = new DefaultTableModel(null, ORDER_LIST) {
 			private static final long serialVersionUID = 1L;
 
@@ -263,6 +320,18 @@ public class AppMain implements PropertyChangeListener {
 			}
 		}
 		tableOrderList.setModel(tableOrderListModel);
+
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+		for (int i = 2; i < ORDER_LIST.length; i++) {
+			column = tableOrderList.getColumnModel().getColumn(i);
+			column.setCellRenderer(renderer);
+		}
+
+		// 셀 크기 제한 설정
+//		TableColumnModel columnModel = tableBasedOrders.getColumnModel();
+//		TableColumn column = columnModel.getColumn(5);
+//		column.setMinWidth(300);
 	}
 
 	// 두번째 탭 테이블 그리기
@@ -271,12 +340,16 @@ public class AppMain implements PropertyChangeListener {
 			private static final long serialVersionUID = 1L;
 
 			public boolean isCellEditable(int row, int column) {
-				// TODO: 테이블 다시 그릴때 언제 어느 위치를 막을건지 결정
-				if (column == 1 && addBtn.isEnabled()) {
-					// Allow editing for the second column
+				// 테이블 다시 그릴때 언제 어느 위치를 언제 막을건지 결정
+				if (column == 1 && addBtn.isEnabled() && saveBtn.getText().equals("저장")) {
+					return false;
+				} else if (row != 0 && !addBtn.isEnabled() && saveBtn.getText().equals("저장")) {
+					return false;
+				} else if (column == 1 && saveBtn.getText().equals("수정하기")) {
+					return false;
+				} else if (addBtn.isEnabled() && !checkCrud.toUpperCase().contains("U")) {
 					return false;
 				} else {
-					// Disable editing for all other columns
 					return true;
 				}
 			};
@@ -286,7 +359,69 @@ public class AppMain implements PropertyChangeListener {
 					p.getImsqob(), p.getQnttyBndl() };
 			tableBasedOrdersModel.addRow(row);
 		}
+		if (!checkCrud.toUpperCase().contains("D")) {
+			System.out.println("D 없음");
+			deleteBtn.setEnabled(false);
+		}
+		if (!checkCrud.toUpperCase().contains("U")) {
+			System.out.println("U 없음");
+			tableBasedOrders.removePropertyChangeListener(AppMain.this);
+		}
+		if (!checkCrud.toUpperCase().contains("C")) {
+			tabbedPane.setEnabledAt(1, false);
+			System.out.println("C 없음");
+		}
 		tableBasedOrders.setModel(tableBasedOrdersModel);
+
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+		for (int i = 2; i < BASED_ORDERS.length; i++) {
+			column = tableBasedOrders.getColumnModel().getColumn(i);
+			column.setCellRenderer(renderer);
+		}
+	}
+
+	// 세번째 탭 테이블 그리기
+	private void resetShowLogTable(List<ProductLog> productLogs) {
+		tableShowLogsModel = new DefaultTableModel(null, SHOW_LOGS) {
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			};
+		};
+		for (ProductLog p : productLogs) {
+			if (p.getCudData().equals("신규")) {
+				Object[] row = { p.getLogId(), p.getCudData(), p.getTime(), "", p.getAftrCategory(), p.getpName(), "",
+						p.getAftrCurrentInven(), "", p.getAftrMinStk(), "", p.getAftrImsqob(), "", p.getAftrQnttyBndl(),
+						p.getCudManager() };
+				tableShowLogsModel.addRow(row);
+			} else if (p.getCudData().equals("삭제")) {
+				Object[] row = { p.getLogId(), p.getCudData(), p.getTime(), p.getPrvsCategory(), "", p.getpName(),
+						p.getPrvsCurrentInven(), "", p.getPrvsMinStk(), "", p.getPrvsImsqob(), "", p.getPrvsQnttyBndl(),
+						"", p.getCudManager() };
+				tableShowLogsModel.addRow(row);
+			} else {
+				Object[] row = { p.getLogId(), p.getCudData(), p.getTime(), p.getPrvsCategory(), p.getAftrCategory(),
+						p.getpName(), p.getPrvsCurrentInven(), p.getAftrCurrentInven(), p.getPrvsMinStk(),
+						p.getAftrMinStk(), p.getPrvsImsqob(), p.getAftrImsqob(), p.getPrvsQnttyBndl(),
+						p.getAftrQnttyBndl(), p.getCudManager() };
+				tableShowLogsModel.addRow(row);
+			}
+		}
+		tableShowLogs.setModel(tableShowLogsModel);
+
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+		column = tableShowLogs.getColumnModel().getColumn(1);
+		column.setCellRenderer(renderer);
+		column = tableShowLogs.getColumnModel().getColumn(2);
+		column.setCellRenderer(renderer);
+		for (int i = 6; i < SHOW_LOGS.length - 1; i++) {
+			column = tableShowLogs.getColumnModel().getColumn(i);
+			column.setCellRenderer(renderer);
+		}
 
 	}
 
@@ -360,13 +495,21 @@ public class AppMain implements PropertyChangeListener {
 			}
 			try {
 				col5 = Integer.parseInt(row0InItems[5]);
+				if (col5 == 0) {
+					JOptionPane.showMessageDialog(null, "묶음당 낱개는 1이상 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 5);
+					return;
+				}
 			} catch (NumberFormatException e2) {
 				JOptionPane.showMessageDialog(null, "묶음당 낱개의 형식이 올바르지 않습니다.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 5);
 				return;
 			}
-
+			// 로그남기기
+			ProductLog productLog = new ProductLog("신규", row0InItems[0], row0InItems[1], col2, col3, col4, col5,
+					selectedOption);
 			Product product = new Product(row0InItems[0], row0InItems[1], col2, col3, col4, col5);
+			productLogDao.insertNewProductLog(productLog);
 			productDao.insertNewProductInfo(product);
 			JOptionPane.showMessageDialog(null, "저장되었습니다.", "확인", JOptionPane.INFORMATION_MESSAGE);
 			initializeTable();
@@ -382,10 +525,10 @@ public class AppMain implements PropertyChangeListener {
 			}
 		} else if (saveBtn.getText().equals("수정하기")) {
 			System.out.println("updatedRowsSet :      " + updatedRowsSet);
-			int changeCol2;
-			int changeCol3;
-			int changeCol4;
-			int changeCol5;
+			int currentInven;
+			int minStk;
+			int imsqob;
+			int qnttyBndl;
 			// 0 업데이트 됐다고 알려주기
 			int confirm = JOptionPane.showConfirmDialog(null, "정말 수정하시겠습니까?", "수정 확인", JOptionPane.YES_NO_OPTION);
 			if (confirm == JOptionPane.OK_OPTION) {
@@ -394,46 +537,52 @@ public class AppMain implements PropertyChangeListener {
 					// 1 내가 변경한 테이블의 모든 내용 읽어오기
 					System.out.println("내가 수정한 인덱스 번호" + i);
 //				 (String) tableModel.getValueAt(0, 1)
-					String changeCol0 = (String) tableModel.getValueAt(i, 0);
-					String changeCol1 = (String) tableModel.getValueAt(i, 1);
+					String productCategory = (String) tableModel.getValueAt(i, 0);
+					String productName = (String) tableModel.getValueAt(i, 1);
 //					System.out.println(changeCol2);
 					System.out.println(tableModel.getValueAt(i, 2).getClass());
 
 					if (tableModel.getValueAt(i, 2) instanceof Integer) {
-						changeCol2 = (int) tableModel.getValueAt(i, 2);
+						currentInven = (int) tableModel.getValueAt(i, 2);
 					} else {
-						changeCol2 = Integer.parseInt((String) tableModel.getValueAt(i, 2));
+						currentInven = Integer.parseInt((String) tableModel.getValueAt(i, 2));
 					}
 
 					if (tableModel.getValueAt(i, 3) instanceof Integer) {
-						changeCol3 = (int) tableModel.getValueAt(i, 3);
+						minStk = (int) tableModel.getValueAt(i, 3);
 					} else {
-						changeCol3 = Integer.parseInt((String) tableModel.getValueAt(i, 3));
+						minStk = Integer.parseInt((String) tableModel.getValueAt(i, 3));
 					}
 
 					if (tableModel.getValueAt(i, 4) instanceof Integer) {
-						changeCol4 = (int) tableModel.getValueAt(i, 4);
+						imsqob = (int) tableModel.getValueAt(i, 4);
 					} else {
-						changeCol4 = Integer.parseInt((String) tableModel.getValueAt(i, 4));
+						imsqob = Integer.parseInt((String) tableModel.getValueAt(i, 4));
 					}
 
 					if (tableModel.getValueAt(i, 5) instanceof Integer) {
-						changeCol5 = (int) tableModel.getValueAt(i, 5);
+						qnttyBndl = (int) tableModel.getValueAt(i, 5);
 					} else {
-						changeCol5 = Integer.parseInt((String) tableModel.getValueAt(i, 5));
+						qnttyBndl = Integer.parseInt((String) tableModel.getValueAt(i, 5));
 					}
 
-					Product product = new Product(changeCol0, changeCol1, changeCol2, changeCol3, changeCol4,
-							changeCol5);
+//					ProductLog productLog = new ProductLog("수정",changeCol0,changeCol1);
+					Product product = new Product(productCategory, productName, currentInven, minStk, imsqob,
+							qnttyBndl);
 					// 2 update 쿼리 날리기
-					productDao.update(product);
+					// 수정로그 날리기
 					System.out.println(product);
+					productLogDao.updateLog(product, selectedOption);
+					productDao.update(product);
 				}
 				JOptionPane.showMessageDialog(null, "수정이 완료되었습니다.", "확인", JOptionPane.INFORMATION_MESSAGE);
+				updatedRowsSet.clear();
+				// 3 테이블 다시 그리기
+				initializeTable();
+			} else {
+				System.out.println("수정 no 누름");
 			}
-			updatedRowsSet.clear();
-			// 3 테이블 다시 그리기
-			initializeTable();
+
 		}
 
 	}
@@ -454,6 +603,8 @@ public class AppMain implements PropertyChangeListener {
 			for (int i = 0; i < selectedProductNames.length; i++) {
 				selectedProductNames[i] = (String) tableBasedOrdersModel.getValueAt(choiceRows[i], 1);
 			}
+			productLogDao.deleteLog(selectedProductNames, selectedOption);
+			// 삭제하기 작업 끝나면 풀기
 			productDao.delete(selectedProductNames);
 		}
 		initializeTable();
@@ -481,10 +632,18 @@ public class AppMain implements PropertyChangeListener {
 				addBtn.setEnabled(false);
 				deleteBtn.setEnabled(false);
 				saveBtn.setEnabled(false);
-				cancelBtn.setEnabled(true);
+				cancelBtn.setEnabled(false);
 			} else {
 				System.out.println("셀 편집 모드 종료");
-				if ((String) tableBasedOrders.getValueAt(editingRow, editingColumn) != null) {
+				if (updatedRowsSet.size() != 0) {
+					saveBtn.setEnabled(true);
+				}
+				cancelBtn.setEnabled(true);
+				// 왠지 모르겠지만 계속 에러났었음
+				System.out.println(tableBasedOrders.getValueAt(editingRow, editingColumn).getClass());
+				System.out.println(tableBasedOrders.getValueAt(editingRow, editingColumn) instanceof String);
+				if ((String) tableBasedOrders.getValueAt(editingRow, editingColumn) != null
+						&& !(tableBasedOrders.getValueAt(editingRow, editingColumn) instanceof String)) {
 					updatedValue = (String) tableBasedOrders.getValueAt(editingRow, editingColumn);
 				} else {
 					updatedValue = "";
@@ -492,9 +651,9 @@ public class AppMain implements PropertyChangeListener {
 				updatedValue = (String) tableBasedOrders.getValueAt(editingRow, editingColumn);
 
 				System.out.println("셀 퇴근 후 값" + updatedValue);
-				if (!originalCellValue.equals(updatedValue)) {
-					saveBtn.setEnabled(true);
+				if (!originalCellValue.equals(updatedValue) && originalCellValue != null && updatedValue != null) {
 					System.out.println("셀값 변경 감지됨");
+					saveBtn.setEnabled(true);
 					System.out.println(editingRow);
 //					System.out.println(editingColumn);
 
@@ -565,7 +724,15 @@ public class AppMain implements PropertyChangeListener {
 //					System.out.println(updatedRows);
 				} else {
 					// 유효성 검사 해야 되서 False 로 바꿔놔야댐
-					saveBtn.setEnabled(false);
+					if (updatedRowsSet.size() == 0) {
+						saveBtn.setText("저장");
+						cancelBtn.setText("취소");
+						saveBtn.setEnabled(false);
+						cancelBtn.setEnabled(false);
+						addBtn.setEnabled(true);
+						if (checkCrud.toUpperCase().contains("D"))
+							deleteBtn.setEnabled(true);
+					}
 				}
 			}
 		}
