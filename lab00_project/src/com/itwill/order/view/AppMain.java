@@ -1,7 +1,6 @@
 package com.itwill.order.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.time.LocalDateTime;
@@ -27,7 +26,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
@@ -38,7 +36,6 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
 import javax.swing.event.AncestorListener;
-import javax.swing.plaf.basic.BasicSliderUI.TrackListener;
 import javax.swing.event.AncestorEvent;
 
 public class AppMain implements PropertyChangeListener {
@@ -444,7 +441,12 @@ public class AppMain implements PropertyChangeListener {
 			if ((String) tableModel.getValueAt(0, 0) != null) {
 				insertProductCategory = (String) tableModel.getValueAt(0, 0);
 				if (insertProductCategory.isBlank()) {
-					JOptionPane.showMessageDialog(null, "상품 분류를 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "상품분류를 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				if (((String) tableModel.getValueAt(0, 0)).length() > 20) {
+					JOptionPane.showMessageDialog(null, "상품분류는 최대 20글자까지 입력 가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 0);
 					return;
 				}
 			}
@@ -454,6 +456,11 @@ public class AppMain implements PropertyChangeListener {
 				insertProductName = (String) tableModel.getValueAt(0, 1);
 				if (insertProductName.isBlank()) {
 					JOptionPane.showMessageDialog(null, "상품명을 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				if (((String) tableModel.getValueAt(0, 1)).length() > 20) {
+					JOptionPane.showMessageDialog(null, "상품명은 최대 20글자까지 입력 가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 1);
 					return;
 				} else {
 					for (int i = 1; i < column1InItems.length; i++) {
@@ -473,23 +480,37 @@ public class AppMain implements PropertyChangeListener {
 			}
 			try {
 				col2 = Integer.parseInt(row0InItems[2]);
+				if (col2 > 99999) {
+					JOptionPane.showMessageDialog(null, "현재 재고는 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 2);
+					return;
+				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "현재 재고의 형식이 올바르지 않습니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "현재 재고는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 2);
 				return;
 			}
 			try {
 				col3 = Integer.parseInt(row0InItems[3]);
+				if (col3 > 99999) {
+					JOptionPane.showMessageDialog(null, "최소 확보 재고는 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 3);
+					return;
+				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "최소 확보 재고의 형식이 올바르지 않습니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "최소 확보 재고는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 3);
 				return;
 			}
 			try {
 				col4 = Integer.parseInt(row0InItems[4]);
+				if (col4 > 99999) {
+					JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 4);
+					return;
+				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "최소확보재고 이하 일때 발주할 수량(묶음)의 형식이 올바르지 않습니다.", "경고",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 4);
 				return;
 			}
@@ -500,8 +521,13 @@ public class AppMain implements PropertyChangeListener {
 					tableModel.setValueAt("", 0, 5);
 					return;
 				}
+				if (col5 > 99999) {
+					JOptionPane.showMessageDialog(null, "묶음당 낱개는 1부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					tableModel.setValueAt("", 0, 5);
+					return;
+				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "묶음당 낱개의 형식이 올바르지 않습니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "묶음당 낱개는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 5);
 				return;
 			}
@@ -657,15 +683,19 @@ public class AppMain implements PropertyChangeListener {
 					System.out.println(editingRow);
 //					System.out.println(editingColumn);
 
-					// 저장 전에 컬럼 유효성 검사
+					// 수정 전에 컬럼 유효성 검사
 					// 0번째 컬럼 유효성 검사
 					if (editingColumn == 0) {
 						if (updatedValue.isBlank()) {
 							JOptionPane.showMessageDialog(null, "상품 분류를 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 							tableBasedOrders.setValueAt(originalCellValue, editingRow, 0);
+						} else if (updatedValue.length() > 20) {
+							JOptionPane.showMessageDialog(null, "상품 분류는 최대 20글자까지 입력 가능합니다.", "경고",
+									JOptionPane.ERROR_MESSAGE);
+							tableBasedOrders.setValueAt(originalCellValue, editingRow, 0);
 						}
-
 					}
+					// 상품명 정보 수정
 					if (editingColumn == 1) {
 						// 중복된 상품이 존재하면 true
 						Boolean checkPk = false;
