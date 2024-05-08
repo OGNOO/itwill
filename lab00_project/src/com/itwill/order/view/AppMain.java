@@ -138,8 +138,11 @@ public class AppMain implements PropertyChangeListener {
 		tabbedPane.addTab("발주 예상 목록", tabOrderList);
 		tabOrderList.setLayout(new BorderLayout(0, 0));
 
-		if (selectedOption.contains("님"))
+		if (selectedOption.contains("님")) {
 			replaceSelectedOption = selectedOption.replace("님", "");
+		} else {
+			replaceSelectedOption = selectedOption;
+		}
 		LocalDateTime now = LocalDateTime.now();
 		String formattedDate = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"));
 		String formattedTime = now.format(DateTimeFormatter.ofPattern("HH시 mm분"));
@@ -480,54 +483,60 @@ public class AppMain implements PropertyChangeListener {
 			}
 			try {
 				col2 = Integer.parseInt(row0InItems[2]);
-				if (col2 > 99999) {
-					JOptionPane.showMessageDialog(null, "현재 재고는 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				if (col2 > 99999 || col2 < 0) {
+					JOptionPane.showMessageDialog(null, "현재 재고는 정수(0 ~ 99999)만 입력가능합니다. ", "경고",
+							JOptionPane.ERROR_MESSAGE);
 					tableModel.setValueAt("", 0, 2);
 					return;
 				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "현재 재고는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "현재 재고는 정수(0 ~ 99999)만 입력가능합니다. ", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 2);
 				return;
 			}
 			try {
 				col3 = Integer.parseInt(row0InItems[3]);
-				if (col3 > 99999) {
-					JOptionPane.showMessageDialog(null, "최소 확보 재고는 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				if (col3 > 99999 || col3 < 0) {
+					JOptionPane.showMessageDialog(null, "최소 확보 재고는 정수(0 ~ 99999)만 입력가능합니다. ", "경고",
+							JOptionPane.ERROR_MESSAGE);
 					tableModel.setValueAt("", 0, 3);
 					return;
 				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "최소 확보 재고는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "최소 확보 재고는 정수(0 ~ 99999)만 입력가능합니다. ", "경고",
+						JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 3);
 				return;
 			}
 			try {
 				col4 = Integer.parseInt(row0InItems[4]);
-				if (col4 > 99999) {
-					JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 0부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+				if (col4 > 99999 || col4 < 0) {
+					JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 정수(0 ~ 99999)만 입력가능합니다. ", "경고",
+							JOptionPane.ERROR_MESSAGE);
 					tableModel.setValueAt("", 0, 4);
 					return;
 				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "이하 일때 발주할 묶음은 정수(0 ~ 99999)만 입력가능합니다. ", "경고",
+						JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 4);
 				return;
 			}
 			try {
 				col5 = Integer.parseInt(row0InItems[5]);
-				if (col5 == 0) {
+				if (col5 <= 0) {
 					JOptionPane.showMessageDialog(null, "묶음당 낱개는 1이상 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
 					tableModel.setValueAt("", 0, 5);
 					return;
 				}
 				if (col5 > 99999) {
-					JOptionPane.showMessageDialog(null, "묶음당 낱개는 1부터 ~ 99999까지 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, "묶음당 낱개는 정수(1 ~ 99999)만 입력가능합니다.", "경고",
+							JOptionPane.ERROR_MESSAGE);
 					tableModel.setValueAt("", 0, 5);
 					return;
 				}
 			} catch (NumberFormatException e2) {
-				JOptionPane.showMessageDialog(null, "묶음당 낱개는 숫자로 입력해주세요.", "경고", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "묶음당 낱개는 정수(1 ~ 99999)만 입력가능합니다.", "경고", JOptionPane.ERROR_MESSAGE);
 				tableModel.setValueAt("", 0, 5);
 				return;
 			}
@@ -623,7 +632,7 @@ public class AppMain implements PropertyChangeListener {
 			return;
 		}
 
-		int confirm = JOptionPane.showConfirmDialog(null, "정말 삭제하기겠습니까?", "삭제 확인", JOptionPane.YES_NO_OPTION);
+		int confirm = JOptionPane.showConfirmDialog(null, "정말 삭제하시겠습니까?", "삭제 확인", JOptionPane.YES_NO_OPTION);
 		if (confirm == JOptionPane.YES_OPTION) {
 
 			for (int i = 0; i < selectedProductNames.length; i++) {
